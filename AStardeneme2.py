@@ -51,7 +51,7 @@ class Node:
     def setSteps (self):
         self.steps = len(self.path)
 
-    def heuristic1 (current, goal_state):
+    def heuristic1 (self,goal_state):
         i = 0
         j = 0
     
@@ -61,10 +61,8 @@ class Node:
                 return i
             else:
                 while k != 4:
-                    if current[j][k] != goal_state[j][k]:
+                    if self.current[j][k] != goal_state[j][k]:
                         i += 1
-                    print("current", j, k, "=", current[j][k])
-                    print("goal_state", j, k, "=", goal_state[j][k])
                     k += 1
                 j += 1
 
