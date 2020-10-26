@@ -5,6 +5,7 @@ goal_state = [[1, 2, 3, 4],
              [3, 4, 5, 5],
              [4, 5, 5, 0]]
 
+
 class Node:
     global statesReached
     global queue
@@ -35,36 +36,33 @@ class Node:
         if self.loopChecking() == "pruned" or self.dynamicProgramming() == "pruned" or self.worseThanUpperBound(upperBound) == "pruned":
             queue.remove(self)
             print(self, "is removed from queue")
-            return False
-        else:
-            return True #galiba else e gerek yok if in dışına yazsam yeter
+            return False #salak yücenin kafası karıştı #yine
+        return True
     
     def setStatesReached (self, statesReached):
         if self not in statesReached:
             statesReached.append(self)
 
     def setQueue (self,queue):
-        if self.prune:
+        if self.prune():
             queue.append(self)      
             queue.sort(key=lambda x: x.lowerBound, reverse=True)
     
     def setSteps (self):
         self.steps = len(self.path)
 
-    def heuristic1 (self,goal_state):
+    def heuristic1 (self, goal_state):
         i = 0
         j = 0
     
-        while j != 5:
+        while j != 4:
             k = 0 
-            if j == 4:
-                return i
-            else:
-                while k != 4:
-                    if self.current[j][k] != goal_state[j][k]:
-                        i += 1
-                    k += 1
-                j += 1
+            while k != 4:
+                if self.current[j][k] != goal_state[j][k]:
+                    i += 1                    
+                k += 1
+            j += 1
+        return i
 
     def setLowerBound (self):
         self.estimate = self.heuristic1(goal_state) + self.steps
@@ -92,7 +90,7 @@ class Node:
             child1Path = self.path
             child1Path.append(self.current)
             child1 = Node(child1array, child1Step, 0, child1Path)
-            child1.setLowerBound
+            child1.setLowerBound()
             child1.setQueue(queue)
             child1.setStatesReached(statesReached)
             child1.prune()
@@ -105,7 +103,7 @@ class Node:
             child2Path = self.path
             child2Path.append(self.current)
             child2 = Node(child2array, child2Step, 0, child2Path)
-            child2.setLowerBound
+            child2.setLowerBound()
             child2.setQueue(queue)
             child2.setStatesReached(statesReached)
             child2.prune()
@@ -118,7 +116,7 @@ class Node:
             child3Path = self.path
             child3Path.append(self.current)
             child3 = Node(child3array, child3Step, 0, child3Path)
-            child3.setLowerBound
+            child3.setLowerBound()
             child3.setQueue(queue)
             child3.setStatesReached(statesReached)
             child3.prune()
@@ -131,15 +129,13 @@ class Node:
             child4Path = self.path
             child4Path.append(self.current)
             child4 = Node(child4array, child4Step, 0, child4Path)
-            child4.setLowerBound
+            child4.setLowerBound()
             child4.setQueue(queue)
             child4.setStatesReached(statesReached)
             child4.prune()
     
     def __repr__(self):
         return "\n current node: " + self.current +"\n steps Taken so far: " + self.steps + "\n path: " + self.path + "\n Lower Bound of current node: " + self.estimate
-
-
 
 
 start = Node(shuffle(goal_state), 0, 0)
