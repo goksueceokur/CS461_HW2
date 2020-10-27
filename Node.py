@@ -24,12 +24,12 @@ class Node:
     def heuristic1 (self, goal_state):
         i = 0
         j = 0
-    
+        
         while j != 4:
             k = 0 
             while k != 4:
                 if self.current[j][k] != goal_state[j][k]:
-                    i += 1                    
+                    i += 1
                 k += 1
             j += 1
         return i
@@ -83,5 +83,19 @@ class Node:
     def __eq__(self, other): # TODO
         return
 
+    def print_path(self):
+        res = ''
+        for node in self.path:
+            ar = node.current
+            for row in ar:
+                for x in row:
+                    cur += (str(x) + ' ')
+                cur += '\n'
+        print(res)
     def __repr__(self):
-        return "\n current node: " + self.current +"\n steps Taken so far: " + self.steps + "\n path: " + self.path + "\n Lower Bound of current node: " + self.estimation
+        cur = ''
+        for row in self.current:
+            for x in row:
+                cur += (str(x) + ' ')
+            cur += '\n'
+        return "\ncurrent node: \n" + cur +"\nsteps Taken so far: " + str(self.steps) + "\nLower Bound of current node: " + str(self.estimation)
