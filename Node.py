@@ -7,31 +7,30 @@ goal_state = [[1, 2, 3, 4],
 
 
 class Node:
-    global statesReached
-    global queue
-    global goal_state
-    global upperBound
 
     def __init__( self, array, stepsTaken, lowerBound, path = []):
         self.current = array
         self.steps = stepsTaken
         self.path = path
-        self.estimate = lowerBound
+        self.estimation = lowerBound
 
-    def loopChecking (self):
+    def loop_check (self):
         if self.current in self.path:
-            return "pruned"
+            return True
     
-    def dynamicProgramming (self):
+    '''# silinecek
+    def already_reached (self):
         for state in statesReached:
             if self.current == state.current:
                 if state.steps < self.steps:
-                    return "pruned"
-    
-    def worseThanUpperBound(self, upperBound):
+                    return True
+
+    # silinecek
+    def worse_than_upper_bound(self, upperBound):
         if self.estimate >= upperBound:
-            return "pruned"
+            return True
     
+    # silinecek
     def prune (self):
         if self.loopChecking() == "pruned" or self.dynamicProgramming() == "pruned" or self.worseThanUpperBound(upperBound) == "pruned":
             queue.remove(self)
@@ -39,16 +38,18 @@ class Node:
             return False #salak yücenin kafası karıştı #yine
         return True
     
+    # silinecek
     def setStatesReached (self, statesReached):
         if self not in statesReached:
             statesReached.append(self)
 
+    # silinecek
     def setQueue (self,queue):
         if self.prune():
             queue.append(self)      
-            queue.sort(key=lambda x: x.lowerBound, reverse=True)
+            queue.sort(key=lambda x: x.lowerBound, reverse=True)'''
     
-    def setSteps (self):
+    def steps_taken (self):
         self.steps = len(self.path)
 
     def heuristic1 (self, goal_state):
@@ -64,12 +65,12 @@ class Node:
             j += 1
         return i
 
-    def setLowerBound (self):
-        self.estimate = self.heuristic1(goal_state) + self.steps
-        return self.estimate
+    def estimate (self):
+        self.estimation = self.heuristic1(goal_state) + self.steps
+        return self.estimation
     
 
-    def generateChild (self):
+    def generate_child (self):
         blank = -1
         i = 0
 
@@ -137,9 +138,9 @@ class Node:
     def __repr__(self):
         return "\n current node: " + self.current +"\n steps Taken so far: " + self.steps + "\n path: " + self.path + "\n Lower Bound of current node: " + self.estimate
 
-
+'''
 start = Node(shuffle(goal_state), 0, 0)
-start.setLowerBound()
+start.estimate()
 
 statesReached = [start]
 queue = [start]
@@ -163,4 +164,4 @@ def branchAndBound(upperBound):
     else:
         return "best solution is found: " + str(upperBound)
 
-branchAndBound(upperBound)
+branchAndBound(upperBound)'''
