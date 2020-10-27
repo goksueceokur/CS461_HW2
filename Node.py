@@ -10,7 +10,7 @@ NUM_OF_MOVES = 10
 class Node:
 
     def __init__( self, array, stepsTaken, path = []):
-        self.current = array
+        self.current = [row[:] for row in array]
         self.steps = stepsTaken
         self.path = path
         self.estimation = self.estimate()
@@ -20,24 +20,12 @@ class Node:
             return True
     
     def shuffle(self):
-        for i, row in enumerate(self.current):
-            if 0 in row:
-                blank_x, blank_y = i, row.index(0) # coordinates of the 0
-    
         j = 0
         while j < NUM_OF_MOVES: # move(self, array, blank_x, blank_y, direction)
             chance = random.randint(1,4)
 
-            if self.move(self.current, blank_x, blank_y, chance):
+            if self.move(chance):
                 j += 1
-                if chance == 1: # move blank left
-                    blank_x -= 1
-                elif chance == 2: # move blank right
-                    blank_x += 1
-                elif chance == 3: # move blank up
-                    blank_y -= 1
-                elif chance == 4: # move blank down
-                    blank_y += 1
 
     def steps_taken (self):
         self.steps = len(self.path)
@@ -61,43 +49,41 @@ class Node:
     
 
     def generate_children(self):
-        for i, row in enumerate(self.current):
-            if 0 in row:
-                blank_x, blank_y = i, row.index(0) # coordinates of the 0
-        
         children = []
         for i in range(1, 5):
-            new_array = [row[:] for row in self.current]
-            if self.move(new_array, blank_x, blank_y, i):
-                new_path = self.path[:]
-                new_path.append(self)
-                new_node = Node(new_array, self.steps + 1, new_path)
+            new_path = self.path[:]
+            new_path.append(self)
+            new_node = Node(self.current, self.steps + 1, new_path)
+            if new_node.move(i):
                 children.append(new_node)
         return children
             
-    def move(self, array, blank_x, blank_y, direction): # 0: left, 1: right, 2: up, 3: down
+    def move(self, direction): # 1: left, 2: right, 3: up, 4: down
+        for i, row in enumerate(self.current):
+            if 0 in row:
+                blank_x, blank_y = i, row.index(0) # coordinates of the 0
         if direction == 1: # move blank left
             if blank_x == 0:
                 return False
-            array[blank_x][blank_y], array[blank_x - 1][blank_y] = array[blank_x - 1][blank_y], array[blank_x][blank_y]
+            self.current[blank_x][blank_y], self.current[blank_x - 1][blank_y] = self.current[blank_x - 1][blank_y], self.current[blank_x][blank_y]
             blank_x -= 1
             return True
         elif direction == 2: # move blank right
             if blank_x == 3:
                 return False
-            array[blank_x][blank_y], array[blank_x + 1][blank_y] = array[blank_x + 1][blank_y], array[blank_x][blank_y]
+            self.current[blank_x][blank_y], self.current[blank_x + 1][blank_y] = self.current[blank_x + 1][blank_y], self.current[blank_x][blank_y]
             blank_x += 1
             return True
         elif direction == 3: # move blank up
             if blank_y == 0:
                 return False
-            array[blank_x][blank_y], array[blank_x][blank_y - 1] = array[blank_x][blank_y - 1], array[blank_x][blank_y]
+            self.current[blank_x][blank_y], self.current[blank_x][blank_y - 1] = self.current[blank_x][blank_y - 1], self.current[blank_x][blank_y]
             blank_y -= 1
             return True
         elif direction == 4: # move blank down
             if blank_y == 3:
                 return False
-            array[blank_x][blank_y], array[blank_x][blank_y + 1] = array[blank_x][blank_y + 1], array[blank_x][blank_y]
+            self.current[blank_x][blank_y], self.current[blank_x][blank_y + 1] = self.current[blank_x][blank_y + 1], self.current[blank_x][blank_y]
             blank_y += 1
             return True
     
@@ -121,3 +107,10 @@ class Node:
             cur += '\n'
         return "\ncurrent node: \n" + cur +"\nsteps Taken so far: " + str(self.steps) + "\nLower Bound of current node: " + str(self.estimation)
 
+n = Node(goal_state, 0)
+print(n)
+n.shuffle()
+print(n)
+c = n.generate_children()
+for x in c:
+    print(x)
