@@ -8,46 +8,15 @@ goal_state = [[1, 2, 3, 4],
 
 class Node:
 
-    def __init__( self, array, stepsTaken, lowerBound, path = []):
+    def __init__( self, array, stepsTaken, path = []):
         self.current = array
         self.steps = stepsTaken
         self.path = path
-        self.estimation = lowerBound
+        self.estimation = self.estimate()
 
     def loop_check (self):
         if self.current in self.path:
             return True
-    
-    '''# silinecek
-    def already_reached (self):
-        for state in statesReached:
-            if self.current == state.current:
-                if state.steps < self.steps:
-                    return True
-
-    # silinecek
-    def worse_than_upper_bound(self, upperBound):
-        if self.estimate >= upperBound:
-            return True
-    
-    # silinecek
-    def prune (self):
-        if self.loopChecking() == "pruned" or self.dynamicProgramming() == "pruned" or self.worseThanUpperBound(upperBound) == "pruned":
-            queue.remove(self)
-            print(self, "is removed from queue")
-            return False #salak yücenin kafası karıştı #yine
-        return True
-    
-    # silinecek
-    def setStatesReached (self, statesReached):
-        if self not in statesReached:
-            statesReached.append(self)
-
-    # silinecek
-    def setQueue (self,queue):
-        if self.prune():
-            queue.append(self)      
-            queue.sort(key=lambda x: x.lowerBound, reverse=True)'''
     
     def steps_taken (self):
         self.steps = len(self.path)
@@ -70,98 +39,49 @@ class Node:
         return self.estimation
     
 
-    def generate_child (self):
-        blank = -1
-        i = 0
-
-        while blank == -1:
-            Lists = self.current[i]
-
-            if 0 in Lists:
-                blank = Lists.index(0)
-
-            else:
-                i = i+1
-
-        if blank != 0: 
-            child1array = self.current
-            child1array[i][blank] = self.current[i][blank-1]
-            child1array[i][blank-1] = self.current[i][blank]
-            child1Step = self.steps +1
-            child1Path = self.path
-            child1Path.append(self.current)
-            child1 = Node(child1array, child1Step, 0, child1Path)
-            child1.setLowerBound()
-            child1.setQueue(queue)
-            child1.setStatesReached(statesReached)
-            child1.prune()
-
-        if blank != len(Lists) - 1: 
-            child2array = self.current
-            child2array[i][blank] = self.current[i][blank+1]
-            child2array[i][blank+1] = self.current[i][blank]
-            child2Step = self.steps +1
-            child2Path = self.path
-            child2Path.append(self.current)
-            child2 = Node(child2array, child2Step, 0, child2Path)
-            child2.setLowerBound()
-            child2.setQueue(queue)
-            child2.setStatesReached(statesReached)
-            child2.prune()
-
-        if i != len(self.current) - 1 : 
-            child3array = self.current
-            child3array[i][blank] = self.current[i+ 1][blank]
-            child3array[i +1][blank] = self.current[i][blank]
-            child3Step = self.steps +1
-            child3Path = self.path
-            child3Path.append(self.current)
-            child3 = Node(child3array, child3Step, 0, child3Path)
-            child3.setLowerBound()
-            child3.setQueue(queue)
-            child3.setStatesReached(statesReached)
-            child3.prune()
-
-        if i != 0 : 
-            child4array = self.current
-            child4array[i][blank] = self.current[i - 1][blank]
-            child4array[i - 1][blank] = self.current[i][blank]
-            child4Step = self.steps +1
-            child4Path = self.path
-            child4Path.append(self.current)
-            child4 = Node(child4array, child4Step, 0, child4Path)
-            child4.setLowerBound()
-            child4.setQueue(queue)
-            child4.setStatesReached(statesReached)
-            child4.prune()
+    def generate_children(self):
+        for i, row in enumerate(self.current):
+            if 0 in row:
+                blank_x, blank_y = i, row.index(0) # coordinates of the 0
+        
+        children = []
+        for i in range(1, 5):
+            new_array = [row[:] for row in self.current]
+            if self.move(new_array, blank_x, blank_y, i):
+                new_path = self.path[:]
+                new_path.append(self)
+                new_node = Node(new_array, self.steps + 1, new_path)
+                children.append(new_node)
+        return children
+            
+    def move(self, array, blank_x, blank_y, direction): # 0: left, 1: right, 2: up, 3: down
+        if direction == 1: # move blank left
+            if blank_x == 0:
+                return False
+            array[blank_x][blank_y], array[blank_x - 1][blank_y] = array[blank_x - 1][blank_y], array[blank_x][blank_y]
+            blank_x -= 1
+            return True
+        elif direction == 2: # move blank right
+            if blank_x == 3:
+                return False
+            array[blank_x][blank_y], array[blank_x + 1][blank_y] = array[blank_x + 1][blank_y], array[blank_x][blank_y]
+            blank_x += 1
+            return True
+        elif direction == 3: # move blank up
+            if blank_y == 0:
+                return False
+            array[blank_x][blank_y], array[blank_x][blank_y - 1] = array[blank_x][blank_y - 1], array[blank_x][blank_y]
+            blank_y -= 1
+            return True
+        elif direction == 4: # move blank down
+            if blank_y == 3:
+                return False
+            array[blank_x][blank_y], array[blank_x][blank_y + 1] = array[blank_x][blank_y + 1], array[blank_x][blank_y]
+            blank_y += 1
+            return True
     
+    def __eq__(self, other): # TODO
+        return
+
     def __repr__(self):
-        return "\n current node: " + self.current +"\n steps Taken so far: " + self.steps + "\n path: " + self.path + "\n Lower Bound of current node: " + self.estimate
-
-'''
-start = Node(shuffle(goal_state), 0, 0)
-start.estimate()
-
-statesReached = [start]
-queue = [start]
-upperBound = 1000
-
-def branchAndBound(upperBound):
-    mostPromising = queue[0]
-    if mostPromising.current != goal_state:
-        mostPromising.generateChild()
-
-        for node in queue:
-            node.prune()
-    
-    elif upperBound > mostPromising.steps :
-        upperBound = mostPromising.steps
-        queue.remove(mostPromising)
-
-    if queue != []:
-        return branchAndBound(upperBound)
-    
-    else:
-        return "best solution is found: " + str(upperBound)
-
-branchAndBound(upperBound)'''
+        return "\n current node: " + self.current +"\n steps Taken so far: " + self.steps + "\n path: " + self.path + "\n Lower Bound of current node: " + self.estimation
