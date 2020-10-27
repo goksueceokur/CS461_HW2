@@ -144,3 +144,23 @@ start.setLowerBound()
 statesReached = [start]
 queue = [start]
 upperBound = 1000
+
+def branchAndBound(upperBound):
+    mostPromising = queue[0]
+    if mostPromising.current != goal_state:
+        mostPromising.generateChild()
+
+        for node in queue:
+            node.prune()
+    
+    elif upperBound > mostPromising.steps :
+        upperBound = mostPromising.steps
+        queue.remove(mostPromising)
+
+    if queue != []:
+        return branchAndBound(upperBound)
+    
+    else:
+        return "best solution is found: " + str(upperBound)
+
+branchAndBound(upperBound)
