@@ -18,8 +18,10 @@ def shuffle(array):
             blank_x += 1
         elif chance == 3 and blank_y != 0: # move blank up
             array[blank_x][blank_y], array[blank_x][blank_y - 1] = array[blank_x][blank_y - 1], array[blank_x][blank_y]
+            blank_y -= 1
         elif chance == 4 and blank_y != 3: # move blank down
             array[blank_x][blank_y], array[blank_x][blank_y + 1] = array[blank_x][blank_y + 1], array[blank_x][blank_y]
+            blank_y += 1
     return array
         
         
