@@ -4,7 +4,7 @@ goal_state = [[1, 2, 3, 4],
              [3, 4, 5, 5],
              [4, 5, 5, 0]]
 
-NUM_OF_MOVES = 10
+NUM_OF_MOVES = 38
 
 
 class Node:

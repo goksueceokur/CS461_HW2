@@ -26,7 +26,7 @@ class Solver:
     def already_reached (self, newState):
         for state in self.states_reached:
             if newState.current == state.current:
-                if state.steps < self.steps:
+                if state.steps < self.upper_bound:
                     return True
                 else:
                     state = newState
