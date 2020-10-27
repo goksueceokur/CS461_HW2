@@ -96,9 +96,17 @@ class Node:
             ar = node.current
             for row in ar:
                 for x in row:
-                    cur += (str(x) + ' ')
-                cur += '\n'
+                    res += (str(x) + ' ')
+                res += '\n'
+            res += '------------\n'
+        for row in self.current:
+            for x in row:
+                res += (str(x) + ' ')
+            res += '\n'
+        res += '------------\n'
         print(res)
+
+
     def __repr__(self):
         cur = ''
         for row in self.current:
@@ -106,11 +114,3 @@ class Node:
                 cur += (str(x) + ' ')
             cur += '\n'
         return "\ncurrent node: \n" + cur +"\nsteps Taken so far: " + str(self.steps) + "\nLower Bound of current node: " + str(self.estimation)
-
-n = Node(goal_state, 0)
-print(n)
-n.shuffle()
-print(n)
-c = n.generate_children()
-for x in c:
-    print(x)
