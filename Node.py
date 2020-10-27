@@ -1,9 +1,10 @@
-from CS461HW2 import shuffle
-
+import random
 goal_state = [[1, 2, 3, 4],
              [2, 3, 4, 5],
              [3, 4, 5, 5],
              [4, 5, 5, 0]]
+
+NUM_OF_MOVES = 10
 
 
 class Node:
@@ -18,6 +19,26 @@ class Node:
         if self.current in self.path:
             return True
     
+    def shuffle(self):
+        for i, row in enumerate(self.current):
+            if 0 in row:
+                blank_x, blank_y = i, row.index(0) # coordinates of the 0
+    
+        j = 0
+        while j < NUM_OF_MOVES: # move(self, array, blank_x, blank_y, direction)
+            chance = random.randint(1,4)
+
+            if self.move(self.current, blank_x, blank_y, chance):
+                j += 1
+                if chance == 1: # move blank left
+                    blank_x -= 1
+                elif chance == 2: # move blank right
+                    blank_x += 1
+                elif chance == 3: # move blank up
+                    blank_y -= 1
+                elif chance == 4: # move blank down
+                    blank_y += 1
+
     def steps_taken (self):
         self.steps = len(self.path)
 
@@ -99,3 +120,4 @@ class Node:
                 cur += (str(x) + ' ')
             cur += '\n'
         return "\ncurrent node: \n" + cur +"\nsteps Taken so far: " + str(self.steps) + "\nLower Bound of current node: " + str(self.estimation)
+
